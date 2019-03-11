@@ -1,0 +1,12 @@
+Modules/parsermodule.o:parsermodule.c: undefined reference to `_PyParser_Grammar'
+
+--- origsrc/Python-3.8.0a2/Modules/Setup	2019-02-25 07:08:32.000000000 -0500
++++ src/Python-3.8.0a2/Modules/Setup	2019-03-11 12:11:45.792015600 -0400
+@@ -114,6 +114,7 @@ _collections _collectionsmodule.c	# Cont
+ _abc _abc.c				# Abstract base classes
+ itertools itertoolsmodule.c		# Functions creating iterators for efficient looping
+ atexit atexitmodule.c			# Register functions to be run at interpreter-shutdown
++parser parsermodule.c			# core parser
+ _signal -DPy_BUILD_CORE -I$(srcdir)/Include/internal signalmodule.c
+ _stat _stat.c				# stat.h interface
+ time -DPy_BUILD_CORE -I$(srcdir)/Include/internal timemodule.c	# -lm # time operations and variables
