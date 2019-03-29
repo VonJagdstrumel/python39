@@ -1,6 +1,6 @@
---- origsrc/Python-3.4.3/Python/dynload_shlib.c	2015-02-25 05:27:46.000000000 -0600
-+++ src/Python-3.4.3/Python/dynload_shlib.c	2015-05-05 11:25:41.882019700 -0500
-@@ -34,6 +34,8 @@
+--- origsrc/Python-3.8.0a3/Python/dynload_shlib.c	2019-03-25 15:36:40.000000000 -0400
++++ src/Python-3.8.0a3/Python/dynload_shlib.c	2019-03-29 13:18:23.024414000 -0400
+@@ -35,6 +35,8 @@
  
  const char *_PyImport_DynLoadFiletab[] = {
  #ifdef __CYGWIN__
@@ -9,12 +9,12 @@
      ".dll",
  #else  /* !__CYGWIN__ */
      "." SOABI ".so",
---- origsrc/Python-3.4.3/configure.ac	2015-02-25 05:27:46.000000000 -0600
-+++ src/Python-3.4.3/configure.ac	2015-05-05 11:24:25.915873200 -0500
-@@ -864,6 +864,14 @@ cat >> conftest.c <<EOF
-         i386-gnu
- #elif defined(__APPLE__)
+--- origsrc/Python-3.8.0a3/configure.ac	2019-03-29 13:16:29.207031200 -0400
++++ src/Python-3.8.0a3/configure.ac	2019-03-29 13:20:15.713867100 -0400
+@@ -837,6 +837,14 @@ cat >> conftest.c <<EOF
          darwin
+ #elif defined(__VXWORKS__)
+         vxworks
 +#elif defined(__CYGWIN__)
 +# if defined(__x86_64__)
 +        x86_64-cygwin
@@ -26,12 +26,12 @@
  #else
  # error unknown platform triplet
  #endif
-@@ -4096,7 +4097,7 @@ AC_MSG_RESULT($SOABI)
+@@ -4590,7 +4598,7 @@ AC_MSG_RESULT($SOABI)
  
  AC_SUBST(EXT_SUFFIX)
  case $ac_sys_system in
--    Linux*|GNU*|Darwin)
-+    Linux*|GNU*|Darwin|CYGWIN*)
+-    Linux*|GNU*|Darwin|VxWorks)
++    Linux*|GNU*|Darwin|VxWorks|CYGWIN*)
  	EXT_SUFFIX=.${SOABI}${SHLIB_SUFFIX};;
      *)
  	EXT_SUFFIX=${SHLIB_SUFFIX};;

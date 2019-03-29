@@ -1,6 +1,6 @@
 NAME="python38"
 VERSION=3.8.0
-RELEASE=0.1.a2
+RELEASE=0.2.a3
 CATEGORY="Python Interpreters"
 SUMMARY="Py3K language interpreter"
 DESCRIPTION="Python is an interpreted, interactive, object-oriented programming
@@ -14,17 +14,19 @@ SRC_URI="http://www.python.org/ftp/python/${VERSION}/Python-${VERSION}${RELEASE#
 SRC_DIR="Python-${VERSION}${RELEASE##*.}"
 PATCH_URI="
 	00189-use-rpm-wheels.patch
-	3.4-dbm-cygwin.patch
+	3.8-dbm-cygwin.patch
 	3.1-enable-new-dtags.patch
-	3.4-tkinter-cygwin.patch
+	3.8-tkinter-cygwin.patch
 	3.7-ctypes-cygwin.patch
 	3.8-export-PySignal_SetWakeupFd.patch
 	3.2-distutils-shlibext.patch
-	3.4-pep3149-cygwin.patch
+	3.8-pep3149-cygwin.patch
 	3.2-getpath-exe-extension.patch
 	3.8-parser-cygwin.patch
 	3.4-select-cygwin.patch
 	3.4-shebang.patch
+	3.7-ftm.patch
+	3.8-xxsubinterpreters-cygwin.patch
 "
 #	3.0b3-ossaudio.patch
 
