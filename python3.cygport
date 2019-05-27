@@ -26,6 +26,7 @@ PATCH_URI="
 	3.4-select-cygwin.patch
 	3.4-shebang.patch
 	3.7-ftm.patch
+	3.8-nis-cygwin.patch
 	3.8-xxsubinterpreters-cygwin.patch
 "
 #	3.0b3-ossaudio.patch
