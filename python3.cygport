@@ -1,6 +1,6 @@
 NAME="python38"
 VERSION=3.8.0
-RELEASE=0.2.a3
+RELEASE=0.3.a4
 CATEGORY="Python Interpreters"
 SUMMARY="Py3K language interpreter"
 DESCRIPTION="Python is an interpreted, interactive, object-oriented programming
@@ -19,7 +19,7 @@ PATCH_URI="
 	3.8-tkinter-cygwin.patch
 	3.7-ctypes-cygwin.patch
 	3.8-export-PySignal_SetWakeupFd.patch
-	3.2-distutils-shlibext.patch
+	3.8-distutils-cygwin.patch
 	3.8-pep3149-cygwin.patch
 	3.2-getpath-exe-extension.patch
 	3.8-parser-cygwin.patch
@@ -31,9 +31,8 @@ PATCH_URI="
 #	3.0b3-ossaudio.patch
 
 slot=${PV:0:3}
-abi=${slot}m
 pyrootdir=/usr/lib/python${slot}
-pyconfdir=${pyrootdir}/config-${abi}-${ARCH/i6/i3}-cygwin
+pyconfdir=${pyrootdir}/config-${slot}-${ARCH/i6/i3}-cygwin
 pydylddir=${pyrootdir}/lib-dynload
 
 PKG_NAMES="python${slot/.} python${slot/.}-devel python${slot/.}-test python${slot/.}-tkinter idle${slot/.}"
@@ -45,11 +44,10 @@ python38_CONTENTS="
 	--exclude=${pyrootdir#/}/*/test
 	--exclude=${pyrootdir#/}/*/tests
 	--exclude=*_test*.dll
-	usr/bin/libpython${abi}.dll
+	usr/bin/libpython${slot}.dll
 	usr/bin/pydoc${slot}
-	usr/bin/python${slot}
-	usr/bin/python${abi}.exe
-	usr/include/python${abi}/pyconfig.h
+	usr/bin/python${slot}.exe
+	usr/include/python${slot}/pyconfig.h
 	${pydylddir#/}/
 	${pyrootdir#/}/asyncio/
 	${pyrootdir#/}/collections/
@@ -89,15 +87,13 @@ python38_CONTENTS="
 "
 python38_devel_REQUIRES="python${slot/.}-setuptools libcrypt-devel"
 python38_devel_CONTENTS="
-	--exclude=usr/include/python${abi}/pyconfig.h
+	--exclude=usr/include/python${slot}/pyconfig.h
 	--exclude=${pyconfdir#/}/Makefile
 	usr/bin/2to3-${slot}
 	usr/bin/python${slot}-config
-	usr/bin/python${abi}-config
-	usr/include/python${abi}/
+	usr/include/python${slot}/
 	${pyconfdir#/}/
 	usr/lib/libpython${slot}.dll.a
-	usr/lib/libpython${abi}.dll.a
 	usr/lib/pkgconfig/python-${slot}.pc
 "
 idle38_SUMMARY="Python ${slot} Tkinter-based IDE"
@@ -146,7 +142,6 @@ NO_AUTOHEADER=1
 CYGCONF_ARGS="
 	--enable-shared
 	--enable-ipv6
-	--with-dbmliborder=gdbm
 	--with-libc=
 	--with-libm=
 	--with-system-expat
@@ -162,10 +157,7 @@ src_install() {
 
 	rm -f ${D}${pyrootdir}/LICENSE.txt
 
-	dosym python${abi}-config /usr/bin/python${slot}-config
-
-	dosym ${pyconfdir#/usr/lib/}/libpython${abi}.dll.a /usr/lib/libpython${abi}.dll.a
-	dosym ${pyconfdir#/usr/lib/}/libpython${abi}.dll.a /usr/lib/libpython${slot}.dll.a
+	dosym ${pyconfdir#/usr/lib/}/libpython${slot}.dll.a /usr/lib/libpython${slot}.dll.a
 
 	sed -i -e '1 s/\.exe//' ${D}/usr/bin/*${slot}
 

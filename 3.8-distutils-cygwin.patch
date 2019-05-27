@@ -1,0 +1,55 @@
+--- origsrc/Python-3.8.0a4/Lib/distutils/command/build_ext.py	2019-05-06 14:30:25.000000000 -0400
++++ src/Python-3.8.0a4/Lib/distutils/command/build_ext.py	2019-05-19 14:10:57.274355100 -0400
+@@ -725,6 +725,7 @@ class build_ext(Command):
+                 # Either a native build on an Android device or the
+                 # cross-compilation of Python.
+                 if (hasattr(sys, 'getandroidapilevel') or
++                        sys.platform == 'cygwin' or
+                         ('_PYTHON_HOST_PLATFORM' in os.environ and
+                          get_config_var('ANDROID_API_LEVEL') != 0)):
+                     ldversion = get_config_var('LDVERSION')
+--- origsrc/Python-3.8.0a4/Lib/distutils/cygwinccompiler.py	2019-05-06 14:30:25.000000000 -0400
++++ src/Python-3.8.0a4/Lib/distutils/cygwinccompiler.py	2019-05-19 14:35:55.872267300 -0400
+@@ -92,9 +92,7 @@ class CygwinCCompiler(UnixCCompiler):
+     compiler_type = 'cygwin'
+     obj_extension = ".o"
+     static_lib_extension = ".a"
+-    shared_lib_extension = ".dll"
+-    static_lib_format = "lib%s%s"
+-    shared_lib_format = "%s%s"
++    shared_lib_extension = ".dll.a"
+     exe_extension = ".exe"
+ 
+     def __init__(self, verbose=0, dry_run=0, force=0):
+--- origsrc/Python-3.8.0a4/Lib/distutils/unixccompiler.py	2019-05-19 14:24:27.779442200 -0400
++++ src/Python-3.8.0a4/Lib/distutils/unixccompiler.py	2019-05-19 14:35:55.872267300 -0400
+@@ -81,6 +81,7 @@ class UnixCCompiler(CCompiler):
+     xcode_stub_lib_format = dylib_lib_format
+     if sys.platform == "cygwin":
+         exe_extension = ".exe"
++        dylib_lib_extension = ".dll.a"
+ 
+     def preprocess(self, source, output_file=None, macros=None,
+                    include_dirs=None, extra_preargs=None, extra_postargs=None):
+--- origsrc/Python-3.8.0a4/configure.ac	2019-05-19 12:20:43.970322900 -0400
++++ src/Python-3.8.0a4/configure.ac	2019-05-19 13:58:56.215582000 -0400
+@@ -4647,7 +4647,7 @@ AC_MSG_RESULT($LDVERSION)
+ 
+ # On Android the shared libraries must be linked with libpython.
+ AC_SUBST(LIBPYTHON)
+-if test -z "$ANDROID_API_LEVEL"; then
++if test -z "$ANDROID_API_LEVEL" -a "x$MACHDEP" != "xcygwin"; then
+   LIBPYTHON=''
+ else
+   LIBPYTHON="-lpython${VERSION}${ABIFLAGS}"
+--- origsrc/Python-3.8.0a4/setup.py	2019-05-19 12:20:42.157823300 -0400
++++ src/Python-3.8.0a4/setup.py	2019-05-19 14:13:32.603602100 -0400
+@@ -2216,7 +2216,7 @@ class PyBuildExt(build_ext):
+                            depends=sha3_deps))
+ 
+     def detect_nis(self):
+-        if MS_WINDOWS or CYGWIN or HOST_PLATFORM == 'qnx6':
++        if MS_WINDOWS or HOST_PLATFORM == 'qnx6':
+             self.missing.append('nis')
+             return
+ 
