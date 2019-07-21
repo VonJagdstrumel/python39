@@ -1,6 +1,6 @@
 NAME="python38"
 VERSION=3.8.0
-RELEASE=0.3.a4
+RELEASE=0.4.b2
 CATEGORY="Python Interpreters"
 SUMMARY="Py3K language interpreter"
 DESCRIPTION="Python is an interpreted, interactive, object-oriented programming
@@ -96,6 +96,7 @@ python38_devel_CONTENTS="
 	${pyconfdir#/}/
 	usr/lib/libpython${slot}.dll.a
 	usr/lib/pkgconfig/python-${slot}.pc
+	usr/lib/pkgconfig/python-${slot}-embed.pc
 "
 idle38_SUMMARY="Python ${slot} Tkinter-based IDE"
 idle38_REQUIRES="${NAME}-tkinter"
