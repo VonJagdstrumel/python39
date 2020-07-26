@@ -1,6 +1,6 @@
-NAME="python38"
-VERSION=3.8.0
-RELEASE=0.4.b2
+NAME="python39"
+VERSION=3.9.0
+RELEASE=0.1.b5
 CATEGORY="Python Interpreters"
 SUMMARY="Py3K language interpreter"
 DESCRIPTION="Python is an interpreted, interactive, object-oriented programming
@@ -21,25 +21,25 @@ PATCH_URI="
 	3.8-export-PySignal_SetWakeupFd.patch
 	3.8-distutils-cygwin.patch
 	3.8-pep3149-cygwin.patch
-	3.2-getpath-exe-extension.patch
 	3.8-parser-cygwin.patch
 	3.4-select-cygwin.patch
 	3.4-shebang.patch
 	3.7-ftm.patch
 	3.8-nis-cygwin.patch
 	3.8-xxsubinterpreters-cygwin.patch
+	ctypes-vbool.patch
 "
-#	3.0b3-ossaudio.patch
 
 slot=${PV:0:3}
 pyrootdir=/usr/lib/python${slot}
 pyconfdir=${pyrootdir}/config-${slot}-${ARCH/i6/i3}-cygwin
 pydylddir=${pyrootdir}/lib-dynload
 
+DEPEND='libbz2-devel libexpat-devel libffi-devel libgdbm-devel liblzma-devel libncurses-devel libreadline-devel libsqlite3-devel libssl-devel libtirpc-devel libX11-devel tcl-tix tcl-tk-devel zlib-devel'
 PKG_NAMES="python${slot/.} python${slot/.}-devel python${slot/.}-test python${slot/.}-tkinter idle${slot/.}"
-python38_REQUIRES="binutils" # ctypes.util.find_library
-python38_REQUIRES+=" python-pip-wheel python-setuptools-wheel" # ensurepip
-python38_CONTENTS="
+python39_REQUIRES="binutils" # ctypes.util.find_library
+python39_REQUIRES+=" python-pip-wheel python-setuptools-wheel" # ensurepip
+python39_CONTENTS="
 	--exclude=idle3* --exclude=idlelib
 	--exclude=_tkinter*.dll --exclude=tkinter --exclude=turtle*
 	--exclude=${pyrootdir#/}/*/test
@@ -80,14 +80,15 @@ python38_CONTENTS="
 	${pyrootdir#/}/wsgiref/
 	${pyrootdir#/}/xml/
 	${pyrootdir#/}/xmlrpc/
+	${pyrootdir#/}/zoneinfo/
 	${pyrootdir#/}/*.py
 	${pyrootdir#/}/__pycache__/
 	usr/share/doc/${NAME}
 	usr/share/man/man1/python${slot}.1*
 	var/lib/rebase/dynpath.d/${NAME}
 "
-python38_devel_REQUIRES="python${slot/.}-setuptools libcrypt-devel"
-python38_devel_CONTENTS="
+python39_devel_REQUIRES="python${slot/.}-setuptools libcrypt-devel"
+python39_devel_CONTENTS="
 	--exclude=usr/include/python${slot}/pyconfig.h
 	--exclude=${pyconfdir#/}/Makefile
 	usr/bin/2to3-${slot}
@@ -98,9 +99,9 @@ python38_devel_CONTENTS="
 	usr/lib/pkgconfig/python-${slot}.pc
 	usr/lib/pkgconfig/python-${slot}-embed.pc
 "
-idle38_SUMMARY="Python ${slot} Tkinter-based IDE"
-idle38_REQUIRES="${NAME}-tkinter"
-idle38_CONTENTS="
+idle39_SUMMARY="Python ${slot} Tkinter-based IDE"
+idle39_REQUIRES="${NAME}-tkinter"
+idle39_CONTENTS="
 	--exclude=idle_test
 	etc/
 	usr/bin/idle${slot}
@@ -109,8 +110,8 @@ idle38_CONTENTS="
 	usr/share/applications/idle${slot}.desktop
 	usr/share/icons/hicolor/*/apps/idle${slot//.}.png
 "
-python38_test_SUMMARY="Py3K tests"
-python38_test_CONTENTS="
+python39_test_SUMMARY="Py3K tests"
+python39_test_CONTENTS="
 	--exclude=${pyrootdir#/}/test/__init__.py
 	--exclude=${pyrootdir#/}/test/__pycache__/__init__.*
 	--exclude=${pyrootdir#/}/test/support
@@ -124,9 +125,9 @@ python38_test_CONTENTS="
 	${pyrootdir#/}/tkinter/test/
 	${pyrootdir#/}/unittest/test/
 "
-python38_tkinter_SUMMARY="Py3K Tkinter GUI module"
-python38_tkinter_REQUIRES="tcl-tix"
-python38_tkinter_CONTENTS="
+python39_tkinter_SUMMARY="Py3K Tkinter GUI module"
+python39_tkinter_REQUIRES="tcl-tix"
+python39_tkinter_CONTENTS="
 	--exclude=test ${pydylddir#/}/_tkinter*
 	${pyrootdir#/}/tkinter/
 	${pyrootdir#/}/turtle.py
@@ -155,7 +156,8 @@ CYGCONF_ARGS="
 src_install() {
 	cd ${B}
 	dodir /usr
-	cygmake -j1 DESTDIR=${D} altinstall maninstall
+    cygmake testall
+	cygmake DESTDIR=${D} altinstall maninstall
 
 	rm -f ${D}${pyrootdir}/LICENSE.txt
 
