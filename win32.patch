@@ -63,3 +63,15 @@
      {"_tracemalloc", PyInit__tracemalloc},
      /* XXX Should _winapi go in a WIN32 block?  not WIN64? */
      {"_winapi", PyInit__winapi},
+--- a/Modules/socketmodule.h
++++ b/Modules/socketmodule.h
+@@ -8,9 +8,7 @@
+ #   include <sys/socket.h>
+ # endif
+ # include <netinet/in.h>
+-# if !defined(__CYGWIN__)
+ #  include <netinet/tcp.h>
+-# endif
+ 
+ #else /* MS_WINDOWS */
+ # include <winsock2.h>
