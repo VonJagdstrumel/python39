@@ -1,5 +1,31 @@
---- a/Modules/_ctypes/cfield.c
-+++ b/Modules/_ctypes/cfield.c
+--- origsrc/Python-3.9.0b5/Include/pyerrors.h
++++ src/Python-3.9.0b5/Include/pyerrors.h
+@@ -183,7 +181,6 @@ PyAPI_FUNC(PyObject *) PyErr_FormatV(
+     va_list vargs);
+ #endif
+ 
+-#ifdef MS_WINDOWS
+ PyAPI_FUNC(PyObject *) PyErr_SetFromWindowsErrWithFilename(
+     int ierr,
+     const char *filename        /* decoded from the filesystem encoding */
+@@ -201,7 +198,6 @@ PyAPI_FUNC(PyObject *) PyErr_SetExcFromW
+     const char *filename        /* decoded from the filesystem encoding */
+     );
+ PyAPI_FUNC(PyObject *) PyErr_SetExcFromWindowsErr(PyObject *, int);
+-#endif /* MS_WINDOWS */
+ 
+ #if !defined(Py_LIMITED_API) || Py_LIMITED_API+0 >= 0x03060000
+ PyAPI_FUNC(PyObject *) PyErr_SetImportErrorSubclass(PyObject *, PyObject *,
+--- origsrc/Python-3.9.0b5/Modules/Setup
++++ src/Python-3.9.0b5/Modules/Setup
+@@ -370,3 +370,5 @@ xxsubtype xxsubtype.c
+ #
+ #_sqlite3 _tkinter _curses pyexpat
+ #_codecs_jp _codecs_kr _codecs_tw unicodedata
++
++winreg ../PC/winreg.c
+--- origsrc/Python-3.9.0b5/Modules/_ctypes/cfield.c
++++ src/Python-3.9.0b5/Modules/_ctypes/cfield.c
 @@ -684,7 +684,6 @@ i_get_sw(void *ptr, Py_ssize_t size)
      return PyLong_FromLong(val);
  }
@@ -39,32 +65,8 @@
  #if SIZEOF__BOOL == 1
      { '?', bool_set, bool_get, &ffi_type_uchar}, /* Also fallback for no native _Bool support */
  #elif SIZEOF__BOOL == SIZEOF_SHORT
---- a/PC/config.c
-+++ b/PC/config.c
-@@ -27,10 +27,8 @@
- extern PyObject* PyInit__blake2(void);
- extern PyObject* PyInit_time(void);
- extern PyObject* PyInit__thread(void);
--#ifdef WIN32
- extern PyObject* PyInit_msvcrt(void);
- extern PyObject* PyInit__locale(void);
--#endif
- extern PyObject* PyInit__codecs(void);
- extern PyObject* PyInit__weakref(void);
- /* XXX: These two should really be extracted to standalone extensions. */
-@@ -107,10 +105,8 @@
-     {"time", PyInit_time},
-     {"_thread", PyInit__thread},
-     {"_statistics", PyInit__statistics},
--#ifdef WIN32
-     {"msvcrt", PyInit_msvcrt},
-     {"_locale", PyInit__locale},
--#endif
-     {"_tracemalloc", PyInit__tracemalloc},
-     /* XXX Should _winapi go in a WIN32 block?  not WIN64? */
-     {"_winapi", PyInit__winapi},
---- a/Modules/socketmodule.h
-+++ b/Modules/socketmodule.h
+--- origsrc/Python-3.9.0b5/Modules/socketmodule.h
++++ src/Python-3.9.0b5/Modules/socketmodule.h
 @@ -8,9 +8,7 @@
  #   include <sys/socket.h>
  # endif
@@ -75,3 +77,45 @@
  
  #else /* MS_WINDOWS */
  # include <winsock2.h>
+--- origsrc/Python-3.9.0b5/PC/winreg.c
++++ src/Python-3.9.0b5/PC/winreg.c
+@@ -15,7 +15,7 @@
+ #define PY_SSIZE_T_CLEAN
+ #include "Python.h"
+ #include "structmember.h"         // PyMemberDef
+-#include <windows.h>
++#include <w32api/windows.h>
+ 
+ static BOOL PyHKEY_AsHKEY(PyObject *ob, HKEY *pRes, BOOL bNoneOK);
+ static BOOL clinic_HKEY_converter(PyObject *ob, void *p);
+--- origsrc/Python-3.9.0b5/Python/errors.c
++++ src/Python-3.9.0b5/Python/errors.c
+@@ -14,10 +14,8 @@
+ #endif
+ #endif
+
+-#ifdef MS_WINDOWS
+-#include <windows.h>
+-#include <winbase.h>
+-#endif
++#include <w32api/windows.h>
++#include <w32api/winbase.h>
+
+ #include <ctype.h>
+
+@@ -790,7 +786,6 @@ PyErr_SetFromErrno(PyObject *exc)
+     return PyErr_SetFromErrnoWithFilenameObjects(exc, NULL, NULL);
+ }
+
+-#ifdef MS_WINDOWS
+ /* Windows specific error code handling */
+ PyObject *PyErr_SetExcFromWindowsErrWithFilenameObject(
+     PyObject *exc,
+@@ -932,7 +927,6 @@ PyObject *PyErr_SetFromWindowsErrWithUni
+     Py_XDECREF(name);
+     return result;
+ }
+-#endif /* MS_WINDOWS */
+
+ PyObject *
+ PyErr_SetImportErrorSubclass(PyObject *exception, PyObject *msg,
