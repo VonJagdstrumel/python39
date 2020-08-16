@@ -23,17 +23,17 @@ index 4748ba4..fc02255 100644
 -_SETUPTOOLS_VERSION = "47.1.0"
  
 -_PIP_VERSION = "20.1.1"
-+def _get_most_recent_wheel_version(pkg):
++def _get_most_recent_wheel_version(pkg, impl):
 +    prefix = os.path.join(_WHEEL_DIR, "{}-".format(pkg))
-+    suffix = "-py2.py3-none-any.whl"
++    suffix = "-{}-none-any.whl".format(impl)
 +    pattern = "{}*{}".format(prefix, suffix)
 +    versions = (p[len(prefix):-len(suffix)] for p in glob.glob(pattern))
 +    return str(max(versions, key=distutils.version.LooseVersion))
 +
 +
-+_SETUPTOOLS_VERSION = _get_most_recent_wheel_version("setuptools")
++_SETUPTOOLS_VERSION = _get_most_recent_wheel_version("setuptools", "py3")
 +
-+_PIP_VERSION = _get_most_recent_wheel_version("pip")
++_PIP_VERSION = _get_most_recent_wheel_version("pip", "py2.py3")
  
  _PROJECTS = [
      ("setuptools", _SETUPTOOLS_VERSION, "py3"),
